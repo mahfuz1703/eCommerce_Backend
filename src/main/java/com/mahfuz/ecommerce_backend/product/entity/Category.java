@@ -24,15 +24,15 @@ public class Category extends BaseEntity implements Auditable {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "modified_at")
+    @Column(name = "modified_at", nullable = false)
     private LocalDateTime modifiedAt;
 
-    @Column(name = "created_by")
+    @Column(name = "created_by", nullable = true)
     private Long createdBy;
 
-    @Column(name = "modified_by")
+    @Column(name = "modified_by", nullable = true)
     private Long modifiedBy;
 }

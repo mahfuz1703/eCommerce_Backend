@@ -36,15 +36,15 @@ public class Product extends BaseEntity implements Auditable {
     private String imageUrl;
 
     // Auditing fields
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "modified_at")
+    @Column(name = "modified_at", nullable = false)
     private LocalDateTime modifiedAt;
 
-    @Column(name = "created_by")
+    @Column(name = "created_by", nullable = true)
     private Long createdBy;
 
-    @Column(name = "modified_by")
+    @Column(name = "modified_by", nullable = true)
     private Long modifiedBy;
 }
