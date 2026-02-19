@@ -22,4 +22,9 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryMapper.toEntity(request);
         return categoryRepository.save(category);
     }
+
+    public Category getById(Long id){
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceConflictException("Category with id " + id + " not found."));
+    }
 }

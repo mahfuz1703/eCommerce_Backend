@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,4 +61,37 @@ public class CategoryAdminController {
     public ResponseEntity<ApiResponse<Category>> createCategory(@Valid @RequestBody CategoryCreateRequest request){
         return ResponseEntity.ok(ApiResponse.success(categoryService.create(request)));
     }
+
+    // Implement endpoint to retrieve category details by ID
+    @Operation(
+        summary = "Get category details by ID",
+        description = "Endpoint to retrieve details of a specific category by its ID.",
+        responses = {
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Category details retrieved successfully",
+                        content = @Content(
+                                schema = @Schema(implementation = Category.class)
+                        )
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "404",
+                        description = "Category not found",
+                        content = @Content
+                )
+        }
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<Category>> getCategoryById(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success(categoryService.getById(id)));
+    }
+    
+
+    // Implement paginated category listing with filters (active status, parent category)
+
+    // Implement endpoint to update category information (name, description)
+
+    // Implement endpoint to activate or deactivate a category (soft delete via isActive flag)
+
+    // Implement endpoint to permanently delete a category
 }

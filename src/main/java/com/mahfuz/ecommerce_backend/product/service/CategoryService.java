@@ -5,4 +5,6 @@ import com.mahfuz.ecommerce_backend.product.entity.Category;
 
 public interface CategoryService {
     Category create(CategoryCreateRequest request);
+
+    Category getById(Long id);
 }

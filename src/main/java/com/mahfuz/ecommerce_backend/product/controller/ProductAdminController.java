@@ -52,4 +52,16 @@ public class ProductAdminController {
     public ResponseEntity<ApiResponse<Product>> createProduct(@Valid @RequestBody ProductCreateRequest request){
         return ResponseEntity.ok(ApiResponse.success(productService.create(request)));
     }
+
+    // Implement endpoint to retrieve product details by ID
+
+    // Implement paginated product listing with filters (category, active status, price range)
+
+    // Implement endpoint to update product information (name, price, description)
+
+    // Implement functionality to reassign a product to a different category
+
+    // Implement endpoint to activate or deactivate a product (soft delete via isActive flag)
+
+    // Implement endpoint to permanently delete a product
 }
