@@ -1,5 +1,6 @@
 package com.mahfuz.ecommerce_backend.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.mahfuz.ecommerce_backend.common.entity.Auditable;
 import com.mahfuz.ecommerce_backend.common.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -30,6 +31,7 @@ public class Product extends BaseEntity implements Auditable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Category category;
 
     @Column(length = 250)

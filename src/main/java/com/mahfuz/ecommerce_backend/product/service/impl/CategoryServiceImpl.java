@@ -1,6 +1,7 @@
 package com.mahfuz.ecommerce_backend.product.service.impl;
 
 import com.mahfuz.ecommerce_backend.common.exception.ResourceConflictException;
+import com.mahfuz.ecommerce_backend.common.exception.ResourceNotFoundException;
 import com.mahfuz.ecommerce_backend.product.dto.CategoryCreateRequest;
 import com.mahfuz.ecommerce_backend.product.entity.Category;
 import com.mahfuz.ecommerce_backend.product.mapper.CategoryMapper;
@@ -25,6 +26,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     public Category getById(Long id){
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceConflictException("Category with id " + id + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found."));
     }
 }

@@ -1,5 +1,7 @@
 package com.mahfuz.ecommerce_backend.product.service.impl;
 
+import com.mahfuz.ecommerce_backend.common.exception.ResourceConflictException;
+import com.mahfuz.ecommerce_backend.common.exception.ResourceNotFoundException;
 import com.mahfuz.ecommerce_backend.product.dto.ProductCreateRequest;
 import com.mahfuz.ecommerce_backend.product.entity.Category;
 import com.mahfuz.ecommerce_backend.product.entity.Product;
@@ -21,14 +23,19 @@ public class ProductServiceImpl implements ProductService {
 
     public Product create(ProductCreateRequest request){
         if(productRepository.existsBySku(request.sku())){
-            throw new RuntimeException("Product with SKU " + request.sku() + " already exists.");
+            throw new ResourceConflictException("Product with SKU " + request.sku() + " already exists.");
         }
 
         Optional<Category> categoryOptional = categoryRepository.findByCode(request.categoryCode());
         if (categoryOptional.isEmpty()) {
-            throw new RuntimeException("Category with code " + request.categoryCode() + " not found.");
+            throw new ResourceNotFoundException("Category with code " + request.categoryCode() + " not found.");
         }
         Product product = productMapper.toEntity(request, categoryOptional.get());
         return productRepository.save(product);
+    }
+
+    public Product getById(Long id){
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product with ID " + id + " not found."));
     }
 }
