@@ -10,6 +10,9 @@ import com.mahfuz.ecommerce_backend.product.repository.CategoryRepository;
 import com.mahfuz.ecommerce_backend.product.repository.ProductRepository;
 import com.mahfuz.ecommerce_backend.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -37,5 +40,9 @@ public class ProductServiceImpl implements ProductService {
     public Product getById(Long id){
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product with ID " + id + " not found."));
+    }
+
+    public Page<Product> getAll(Pageable pageable){
+        return productRepository.findAll(pageable);
     }
 }

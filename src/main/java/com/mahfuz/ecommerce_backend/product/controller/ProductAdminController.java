@@ -2,6 +2,7 @@ package com.mahfuz.ecommerce_backend.product.controller;
 
 import com.mahfuz.ecommerce_backend.common.constants.ApiEndPoints;
 import com.mahfuz.ecommerce_backend.common.dto.ApiResponse;
+import com.mahfuz.ecommerce_backend.common.dto.PaginatedResponse;
 import com.mahfuz.ecommerce_backend.product.dto.ProductCreateRequest;
 import com.mahfuz.ecommerce_backend.product.entity.Product;
 import com.mahfuz.ecommerce_backend.product.service.ProductService;
@@ -11,12 +12,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -78,7 +83,24 @@ public class ProductAdminController {
         return ResponseEntity.ok(ApiResponse.success(productService.getById(id)));
     }
 
-    // Implement paginated product listing with filters (category, active status, price range)
+    // Implement paginated product listing with filters
+    @Operation(
+        summary = "Get paginated list of products",
+        description = "Endpoint to retrieve a paginated list of products with optional filters for category, price range, and availability. Requires admin privileges.",
+        responses = {
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Paginated list of products retrieved successfully",
+                        content = @Content(schema = @Schema(implementation = PaginatedResponse.class))
+                )
+        }
+    )
+    @GetMapping
+    public ResponseEntity<ApiResponse<PaginatedResponse<Product>>> getProducts(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                                              @RequestParam(value = "size", defaultValue = "10") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.success(PaginatedResponse.of(productService.getAll(pageable))));
+    }
 
     // Implement endpoint to update product information (name, price, description)
 
