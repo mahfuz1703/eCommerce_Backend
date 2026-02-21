@@ -2,6 +2,7 @@ package com.mahfuz.ecommerce_backend.product.controller;
 
 import com.mahfuz.ecommerce_backend.common.constants.ApiEndPoints;
 import com.mahfuz.ecommerce_backend.common.dto.ApiResponse;
+import com.mahfuz.ecommerce_backend.common.dto.PaginatedResponse;
 import com.mahfuz.ecommerce_backend.product.dto.CategoryCreateRequest;
 import com.mahfuz.ecommerce_backend.product.entity.Category;
 import com.mahfuz.ecommerce_backend.product.service.CategoryService;
@@ -11,10 +12,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -87,7 +92,26 @@ public class CategoryAdminController {
     }
     
 
-    // Implement paginated category listing with filters (active status, parent category)
+    // Implement paginated category listing
+    @Operation(
+        summary = "Get paginated list of categories",
+        description = "Endpoint to retrieve a paginated list of categories. Supports pagination parameters like page number and page size.",
+        responses = {
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Paginated list of categories retrieved successfully",
+                        content = @Content(
+                                schema = @Schema(implementation = PaginatedResponse.class)
+                        )
+                )
+        }
+    )
+    @GetMapping
+    public ResponseEntity<ApiResponse<PaginatedResponse<Category>>> getCategories(@RequestParam(name = "page", defaultValue = "0") int page,
+                                                                                   @RequestParam(name = "size", defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(ApiResponse.success(PaginatedResponse.of(categoryService.getAll(pageable))));
+    }
 
     // Implement endpoint to update category information (name, description)
 

@@ -8,6 +8,9 @@ import com.mahfuz.ecommerce_backend.product.mapper.CategoryMapper;
 import com.mahfuz.ecommerce_backend.product.repository.CategoryRepository;
 import com.mahfuz.ecommerce_backend.product.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,5 +30,9 @@ public class CategoryServiceImpl implements CategoryService {
     public Category getById(Long id){
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found."));
+    }
+
+    public Page<Category> getAll(Pageable pageable){
+        return categoryRepository.findAll(pageable);
     }
 }
