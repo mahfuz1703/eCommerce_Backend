@@ -4,6 +4,7 @@ import com.mahfuz.ecommerce_backend.common.constants.ApiEndPoints;
 import com.mahfuz.ecommerce_backend.common.dto.ApiResponse;
 import com.mahfuz.ecommerce_backend.common.dto.PaginatedResponse;
 import com.mahfuz.ecommerce_backend.product.dto.ProductCreateRequest;
+import com.mahfuz.ecommerce_backend.product.dto.ProductUpdateRequest;
 import com.mahfuz.ecommerce_backend.product.entity.Product;
 import com.mahfuz.ecommerce_backend.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,9 +17,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -103,10 +106,101 @@ public class ProductAdminController {
     }
 
     // Implement endpoint to update product information (name, price, description)
+    @Operation(
+        summary = "Update product information",
+        description = "Endpoint to update product information such as name, price, and description. Requires admin privileges.",
+        responses = {
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Product updated successfully",
+                        content = @Content(schema = @Schema(implementation = Product.class))
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "400",
+                        description = "Validation error or bad request",
+                        content = @Content
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "404",
+                        description = "Product not found",
+                        content = @Content
+                )
+        }
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<Product>> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductUpdateRequest request){
+        return ResponseEntity.ok(ApiResponse.success(productService.update(id, request)));
+    }
 
     // Implement functionality to reassign a product to a different category
+    @Operation(
+        summary = "Update product category",
+        description = "Endpoint to reassign a product to a different category. Requires admin privileges.",
+        responses = {
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Product category updated successfully",
+                        content = @Content(schema = @Schema(implementation = Product.class))
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "404",
+                        description = "Product or category not found",
+                        content = @Content
+                )
+        }
+    )
+    @PutMapping("/{id}/category")
+    public ResponseEntity<ApiResponse<Product>> updateProductCategory(@PathVariable Long id, @RequestParam String categoryCode){
+        return ResponseEntity.ok(ApiResponse.success(productService.updateCategory(id, categoryCode)));
+    }
 
     // Implement endpoint to activate or deactivate a product (soft delete via isActive flag)
+    @Operation(
+        summary = "Toggle product active status",
+        description = "Endpoint to activate or deactivate a product using the isActive flag. Requires admin privileges.",
+        responses = {
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Product active status updated successfully",
+                        content = @Content(schema = @Schema(implementation = Product.class))
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "404",
+                        description = "Product not found",
+                        content = @Content
+                )
+        }
+    )
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ApiResponse<Product>> toggleProductStatus(@PathVariable Long id, @RequestParam boolean isActive){
+        return ResponseEntity.ok(ApiResponse.success(productService.toggleActiveStatus(id, isActive)));
+    }
 
     // Implement endpoint to permanently delete a product
+    @Operation(
+        summary = "Delete a product",
+        description = "Endpoint to permanently delete a product. Requires admin privileges.",
+        responses = {
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Product deleted successfully",
+                        content = @Content
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "404",
+                        description = "Product not found",
+                        content = @Content
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "401",
+                        description = "Unauthorized - Admin privileges required",
+                        content = @Content
+                ),
+        }
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id){
+        productService.delete(id);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
 }

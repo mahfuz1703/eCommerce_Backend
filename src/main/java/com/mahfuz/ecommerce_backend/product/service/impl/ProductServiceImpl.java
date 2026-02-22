@@ -3,6 +3,7 @@ package com.mahfuz.ecommerce_backend.product.service.impl;
 import com.mahfuz.ecommerce_backend.common.exception.ResourceConflictException;
 import com.mahfuz.ecommerce_backend.common.exception.ResourceNotFoundException;
 import com.mahfuz.ecommerce_backend.product.dto.ProductCreateRequest;
+import com.mahfuz.ecommerce_backend.product.dto.ProductUpdateRequest;
 import com.mahfuz.ecommerce_backend.product.entity.Category;
 import com.mahfuz.ecommerce_backend.product.entity.Product;
 import com.mahfuz.ecommerce_backend.product.mapper.ProductMapper;
@@ -44,5 +45,34 @@ public class ProductServiceImpl implements ProductService {
 
     public Page<Product> getAll(Pageable pageable){
         return productRepository.findAll(pageable);
+    }
+
+    public Product update(Long id, ProductUpdateRequest request){
+        Product product = getById(id);
+        product.setName(request.name());
+        product.setDescription(request.description());
+        product.setPrice(request.price());
+        return productRepository.save(product);
+    }
+
+    public Product updateCategory(Long id, String categoryCode){
+        Product product = getById(id);
+        Category category = categoryRepository.findByCode(categoryCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Category with code " + categoryCode + " not found."));
+        product.setCategory(category);
+        return productRepository.save(product);
+    }
+
+    public Product toggleActiveStatus(Long id, boolean isActive){
+        Product product = getById(id);
+        product.setActive(isActive);
+        return productRepository.save(product);
+    }
+
+    public void delete(Long id){
+        if(!productRepository.existsById(id)){
+            throw new ResourceNotFoundException("Product with ID " + id + " not found.");
+        }
+        productRepository.deleteById(id);
     }
 }
