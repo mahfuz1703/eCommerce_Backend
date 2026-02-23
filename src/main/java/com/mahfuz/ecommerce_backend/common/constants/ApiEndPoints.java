@@ -16,5 +16,6 @@ public class ApiEndPoints {
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class ProductAdmin{
         public static final String BASE_PRODUCT_ADMIN = API_VERSION + BASR_ADMIN + "/products";
+        public static final String PRODUCT_INVENTORY = "{productId}/inventory";
     }
 }

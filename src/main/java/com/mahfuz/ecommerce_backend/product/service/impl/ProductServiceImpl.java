@@ -5,9 +5,11 @@ import com.mahfuz.ecommerce_backend.common.exception.ResourceNotFoundException;
 import com.mahfuz.ecommerce_backend.product.dto.ProductCreateRequest;
 import com.mahfuz.ecommerce_backend.product.dto.ProductUpdateRequest;
 import com.mahfuz.ecommerce_backend.product.entity.Category;
+import com.mahfuz.ecommerce_backend.product.entity.Inventory;
 import com.mahfuz.ecommerce_backend.product.entity.Product;
 import com.mahfuz.ecommerce_backend.product.mapper.ProductMapper;
 import com.mahfuz.ecommerce_backend.product.repository.CategoryRepository;
+import com.mahfuz.ecommerce_backend.product.repository.InventoryRepository;
 import com.mahfuz.ecommerce_backend.product.repository.ProductRepository;
 import com.mahfuz.ecommerce_backend.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
+    private final InventoryRepository inventoryRepository;
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ProductMapper productMapper;
@@ -35,7 +38,13 @@ public class ProductServiceImpl implements ProductService {
             throw new ResourceNotFoundException("Category with code " + request.categoryCode() + " not found.");
         }
         Product product = productMapper.toEntity(request, categoryOptional.get());
-        return productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+        Inventory inventory = Inventory.builder()
+                .product(savedProduct)
+                .quantity(0)
+                .build();
+        inventoryRepository.save(inventory);
+        return savedProduct;
     }
 
     public Product getById(Long id){

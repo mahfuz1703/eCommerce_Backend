@@ -3,9 +3,11 @@ package com.mahfuz.ecommerce_backend.product.controller;
 import com.mahfuz.ecommerce_backend.common.constants.ApiEndPoints;
 import com.mahfuz.ecommerce_backend.common.dto.ApiResponse;
 import com.mahfuz.ecommerce_backend.common.dto.PaginatedResponse;
+import com.mahfuz.ecommerce_backend.product.dto.InventoryUpdateRequest;
 import com.mahfuz.ecommerce_backend.product.dto.ProductCreateRequest;
 import com.mahfuz.ecommerce_backend.product.dto.ProductUpdateRequest;
 import com.mahfuz.ecommerce_backend.product.entity.Product;
+import com.mahfuz.ecommerce_backend.product.service.InventoryService;
 import com.mahfuz.ecommerce_backend.product.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -36,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 )
 public class ProductAdminController {
     private final ProductService productService;
+    private final InventoryService inventoryService;
 
     @Operation(
             summary = "Create a new product",
@@ -202,5 +205,33 @@ public class ProductAdminController {
     public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id){
         productService.delete(id);
         return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+    //     Implement endpoint to update product inventory (stock quantity)
+    @Operation(
+        summary = "Update product inventory",
+        description = "Endpoint to update the stock quantity of a product. Requires admin privileges.",
+        responses = {
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "200",
+                        description = "Product inventory updated successfully",
+                        content = @Content
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "400",
+                        description = "Validation error or bad request",
+                        content = @Content
+                ),
+                @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                        responseCode = "404",
+                        description = "Product not found",
+                        content = @Content
+                )
+        }
+    )
+    @PutMapping(ApiEndPoints.ProductAdmin.PRODUCT_INVENTORY)
+    public ResponseEntity<ApiResponse<Void>> updateStock(@PathVariable Long productId, @Valid @RequestBody InventoryUpdateRequest request){
+        inventoryService.updateStock(productId, request);
+        return ResponseEntity.ok(ApiResponse.success("Stock updated successfully", null));
     }
 }
