@@ -18,4 +18,10 @@ public class ApiEndPoints {
         public static final String BASE_PRODUCT_ADMIN = API_VERSION + BASR_ADMIN + "/products";
         public static final String PRODUCT_INVENTORY = "{productId}/inventory";
     }
+
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Cart{
+        public static final String BASE_CART = API_VERSION + "/cart";
+        public static final String ADD_CART_ITEM = "/items/{productId}";
+    }
 }
